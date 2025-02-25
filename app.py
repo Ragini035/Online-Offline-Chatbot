@@ -1,5 +1,4 @@
 import streamlit as st
-import speech_recognition as sr
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.llms import Ollama
@@ -45,34 +44,12 @@ chain = LLMChain(
     memory=st.session_state.memory  # Attach memory to store chat history
 )
 
-# Voice Input Function
-def recognize_speech():
-    recognizer = sr.Recognizer()
-    with sr.Microphone() as source:
-        st.write("🎙️ Speak now...")
-        recognizer.adjust_for_ambient_noise(source)
-        try:
-            audio = recognizer.listen(source, timeout=5)
-            text = recognizer.recognize_google(audio)
-            return text
-        except sr.UnknownValueError:
-            return "Sorry, I couldn't understand that."
-        except sr.RequestError:
-            return "Speech recognition service is unavailable."
-
 # Initialize Chat History
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
 # User Input Box at the Bottom
-user_input = st.chat_input("Type or use voice input 🎤")
-
-# Voice Input Button
-if st.button("🎤 Speak"):
-    spoken_text = recognize_speech()
-    st.text_area("🎙️ You said:", spoken_text)
-    if spoken_text and "Sorry" not in spoken_text:
-        user_input = spoken_text
+user_input = st.chat_input("Type your question here...")
 
 # Process User Input
 if user_input:
